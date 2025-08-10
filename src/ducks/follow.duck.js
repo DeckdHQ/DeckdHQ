@@ -24,6 +24,9 @@ const FOLLOWER_COUNTS_STORAGE_KEY = 'sharetribe_follower_counts';
 // Load follower counts from localStorage with validation
 const loadFollowerCountsFromStorage = () => {
   try {
+    if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
+      return {};
+    }
     const saved = localStorage.getItem(FOLLOWER_COUNTS_STORAGE_KEY);
     if (!saved) {
       return {};
@@ -39,14 +42,18 @@ const loadFollowerCountsFromStorage = () => {
     
     if (hasUnrealisticCounts) {
       console.log('🧹 Detected unrealistic follower counts, resetting to clean state...');
-      localStorage.removeItem(FOLLOWER_COUNTS_STORAGE_KEY);
+      if (typeof localStorage !== 'undefined') {
+        localStorage.removeItem(FOLLOWER_COUNTS_STORAGE_KEY);
+      }
       return {};
     }
     
     return parsed;
   } catch (error) {
     console.warn('Error loading follower counts from storage:', error);
-    localStorage.removeItem(FOLLOWER_COUNTS_STORAGE_KEY);
+    if (typeof localStorage !== 'undefined') {
+      try { localStorage.removeItem(FOLLOWER_COUNTS_STORAGE_KEY); } catch (_) {}
+    }
     return {};
   }
 };
@@ -54,6 +61,7 @@ const loadFollowerCountsFromStorage = () => {
 // Save follower counts to localStorage
 const saveFollowerCountsToStorage = (counts) => {
   try {
+    if (typeof window === 'undefined' || typeof localStorage === 'undefined') return;
     localStorage.setItem(FOLLOWER_COUNTS_STORAGE_KEY, JSON.stringify(counts));
   } catch (error) {
     console.warn('Error saving follower counts to storage:', error);
@@ -215,7 +223,9 @@ export default function followReducer(state = initialState, action = {}) {
 
     case RESET_FOLLOWER_COUNTS: {
       // Clear localStorage and reset all counts to 0
-      localStorage.removeItem(FOLLOWER_COUNTS_STORAGE_KEY);
+      if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+        try { localStorage.removeItem(FOLLOWER_COUNTS_STORAGE_KEY); } catch (_) {}
+      }
       
       return {
         ...state,
