@@ -1,0 +1,91 @@
+.root {
+  margin: 0;
+}
+
+.makeOfferButton {
+  width: 100%;
+  margin-top: 8px;
+  margin-bottom: 80px; /* Add space to avoid mobile order form overlap */
+}
+
+@media (--viewportLarge) {
+  .makeOfferButton {
+    margin-bottom: 0; /* Reset margin on desktop */
+  }
+}
+
+.offerForm {
+  position: relative;
+  z-index: 15;
+  border: 2px solid var(--matterColorNegative);
+  border-radius: 4px;
+  padding: 16px;
+  margin-top: 8px;
+  margin-bottom: 80px; /* Add space to avoid mobile order form */
+  background-color: var(--matterColorLight);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+@media (--viewportLarge) {
+  .offerForm {
+    margin-bottom: 16px; /* Reset margin on desktop */
+  }
+}
+
+.offerTitle {
+  margin: 0 0 12px 0;
+  font-size: 18px;
+  font-weight: var(--fontWeightSemiBold);
+  color: var(--matterColor);
+}
+
+.originalPrice {
+  margin-bottom: 16px;
+  padding: 8px 12px;
+  background-color: var(--matterColorBright);
+  border-radius: 4px;
+  font-size: 14px;
+  color: var(--matterColorAnti);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.priceField {
+  margin-bottom: 16px;
+}
+
+.formActions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.cancelButton {
+  flex: 0 0 auto;
+  min-width: 80px;
+}
+
+.submitButton {
+  flex: 0 0 auto;
+  min-width: 120px;
+}
+
+@media (max-width: 767px) {
+  .formActions {
+    flex-direction: column-reverse;
+    gap: 8px;
+  }
+  
+  .cancelButton,
+  .submitButton {
+    width: 100%;
+    min-width: auto;
+  }
+  
+  .offerForm {
+    padding: 12px;
+  }
+} 

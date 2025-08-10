@@ -1,0 +1,190 @@
+.root {
+  border: 2px solid var(--matterColorNegative);
+  border-radius: 8px;
+  padding: 24px;
+  margin-top: 24px;
+  background-color: var(--matterColorLight);
+}
+
+.title {
+  margin: 0 0 16px 0;
+  font-size: 20px;
+  font-weight: var(--fontWeightSemiBold);
+  color: var(--matterColor);
+}
+
+.offerDetails {
+  margin-bottom: 20px;
+}
+
+.priceInfo {
+  background-color: var(--matterColorBright);
+  border-radius: 6px;
+  padding: 16px;
+  border: 1px solid var(--matterColorNegative);
+}
+
+.priceRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.priceRow:last-child {
+  margin-bottom: 0;
+}
+
+.priceLabel {
+  font-size: 14px;
+  color: var(--matterColorAnti);
+  font-weight: var(--fontWeightMedium);
+}
+
+.priceValue {
+  font-size: 16px;
+  font-weight: var(--fontWeightSemiBold);
+  color: var(--matterColor);
+}
+
+.offerPriceValue {
+  color: var(--successColor);
+}
+
+.counterPriceValue {
+  color: var(--attentionColor);
+}
+
+.actionButtons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.actionButtons > button {
+  flex: 1;
+  min-width: 120px;
+  /* Ensure buttons are visible */
+  opacity: 1 !important;
+  visibility: visible !important;
+  height: auto !important;
+  min-height: 40px !important;
+}
+
+.rejectButton {
+  background-color: var(--failColor) !important;
+  border-color: var(--failColor) !important;
+  color: white !important;
+}
+
+.rejectButton:hover {
+  background-color: var(--failColorHover);
+  border-color: var(--failColorHover);
+}
+
+.counterButton {
+  background-color: var(--attentionColor) !important;
+  border-color: var(--attentionColor) !important;
+  color: white !important;
+}
+
+.counterButton:hover {
+  background-color: var(--attentionColorHover);
+  border-color: var(--attentionColorHover);
+}
+
+.acceptButton,
+.acceptCounterButton {
+  background-color: var(--successColor) !important;
+  border-color: var(--successColor) !important;
+  color: white !important;
+}
+
+.acceptButton:hover,
+.acceptCounterButton:hover {
+  background-color: var(--successColorHover);
+  border-color: var(--successColorHover);
+}
+
+.declineButton {
+  background-color: var(--failColor);
+  border-color: var(--failColor);
+  color: white;
+}
+
+.declineButton:hover {
+  background-color: var(--failColorHover);
+  border-color: var(--failColorHover);
+}
+
+.counterForm {
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid var(--matterColorNegative);
+  border-radius: 6px;
+  background-color: white;
+}
+
+.counterPriceField {
+  margin-bottom: 16px;
+}
+
+.formActions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.statusMessage {
+  padding: 12px 16px;
+  border-radius: 6px;
+  font-weight: var(--fontWeightMedium);
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.acceptedStatus {
+  background-color: var(--successColorLight);
+  color: var(--successColorDark);
+  border: 1px solid var(--successColor);
+}
+
+.rejectedStatus {
+  background-color: var(--failColorLight);
+  color: var(--failColorDark);
+  border: 1px solid var(--failColor);
+}
+
+.waitingMessage {
+  padding: 12px 16px;
+  background-color: var(--matterColorBright);
+  border-radius: 6px;
+  text-align: center;
+  font-style: italic;
+  color: var(--matterColorAnti);
+  margin-top: 16px;
+}
+
+@media (max-width: 767px) {
+  .root {
+    padding: 16px;
+    margin-top: 16px;
+  }
+  
+  .actionButtons {
+    flex-direction: column;
+  }
+  
+  .actionButtons > button {
+    width: 100%;
+    min-width: auto;
+  }
+  
+  .formActions {
+    flex-direction: column-reverse;
+  }
+  
+  .formActions > button {
+    width: 100%;
+  }
+} 

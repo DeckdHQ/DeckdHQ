@@ -1,0 +1,1 @@
+export { loadData } from '../../ducks/auction.duck'; 
