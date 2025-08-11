@@ -2,18 +2,14 @@ import React, { Component } from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Switch, Route, withRouter } from 'react-router-dom';
-
 import { useRouteConfiguration } from '../context/routeConfigurationContext';
 import { propTypes } from '../util/types';
 import * as log from '../util/log';
 import { canonicalRoutePath } from '../util/routes';
 import { useConfiguration } from '../context/configurationContext';
-
 import { locationChanged } from '../ducks/routing.duck';
-
 import { NamedRedirect } from '../components';
 import NotFoundPage from '../containers/NotFoundPage/NotFoundPage';
-
 import LoadableComponentErrorBoundary from './LoadableComponentErrorBoundary/LoadableComponentErrorBoundary';
 
 const isBanned = currentUser => {

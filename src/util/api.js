@@ -172,6 +172,11 @@ export const checkLikedListings = body => {
   return post('/api/check-liked-listings', body);
 };
 
+// Get listing like counts (public, no auth required)
+export const getListingLikeCounts = body => {
+  return post('/api/get-listing-likes', body);
+};
+
 // Make offer functionality
 export const makeOffer = body => {
   return post('/api/make-offer', body);

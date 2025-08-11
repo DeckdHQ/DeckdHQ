@@ -1,6 +1,6 @@
 import { fetchCurrentUser } from './user.duck';
 import { addMarketplaceEntities } from './marketplaceData.duck';
-import { likeListing as likeListingAPI, getLikedListings as getLikedListingsAPI, checkLikedListings as checkLikedListingsAPI } from '../util/api';
+import { likeListing as likeListingAPI, getLikedListings as getLikedListingsAPI, checkLikedListings as checkLikedListingsAPI, getListingLikeCounts as getListingLikeCountsAPI } from '../util/api';
 
 // ================ Action types ================ //
 
@@ -19,6 +19,10 @@ export const GET_LIKED_LISTINGS_ERROR = 'app/like/GET_LIKED_LISTINGS_ERROR';
 export const CHECK_LIKED_LISTINGS_REQUEST = 'app/like/CHECK_LIKED_LISTINGS_REQUEST';
 export const CHECK_LIKED_LISTINGS_SUCCESS = 'app/like/CHECK_LIKED_LISTINGS_SUCCESS';
 export const CHECK_LIKED_LISTINGS_ERROR = 'app/like/CHECK_LIKED_LISTINGS_ERROR';
+
+export const GET_LISTING_LIKE_COUNTS_REQUEST = 'app/like/GET_LISTING_LIKE_COUNTS_REQUEST';
+export const GET_LISTING_LIKE_COUNTS_SUCCESS = 'app/like/GET_LISTING_LIKE_COUNTS_SUCCESS';
+export const GET_LISTING_LIKE_COUNTS_ERROR = 'app/like/GET_LISTING_LIKE_COUNTS_ERROR';
 
 export const RESET_LIKE_COUNTS = 'app/like/RESET_LIKE_COUNTS';
 
@@ -40,10 +44,17 @@ export const checkLikedListingsRequest = () => ({ type: CHECK_LIKED_LISTINGS_REQ
 export const checkLikedListingsSuccess = payload => ({ type: CHECK_LIKED_LISTINGS_SUCCESS, payload });
 export const checkLikedListingsError = payload => ({ type: CHECK_LIKED_LISTINGS_ERROR, payload, error: true });
 
+export const getListingLikeCountsRequest = () => ({ type: GET_LISTING_LIKE_COUNTS_REQUEST });
+export const getListingLikeCountsSuccess = payload => ({ type: GET_LISTING_LIKE_COUNTS_SUCCESS, payload });
+export const getListingLikeCountsError = payload => ({ type: GET_LISTING_LIKE_COUNTS_ERROR, payload, error: true });
+
 // ================ Utility functions ================ //
 
 const loadLikeCountsFromStorage = () => {
   try {
+    if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
+      return {};
+    }
     const counts = localStorage.getItem('listingLikeCounts');
     const parsed = counts ? JSON.parse(counts) : {};
     return typeof parsed === 'object' && parsed !== null ? parsed : {};
@@ -53,9 +64,10 @@ const loadLikeCountsFromStorage = () => {
   }
 };
 
-const saveLikeCountsToStorage = likeCounts => {
+const saveLikeCountsToStorage = (counts) => {
   try {
-    localStorage.setItem('listingLikeCounts', JSON.stringify(likeCounts));
+    if (typeof window === 'undefined' || typeof localStorage === 'undefined') return;
+    localStorage.setItem('listingLikeCounts', JSON.stringify(counts));
   } catch (error) {
     console.warn('Error saving like counts to storage:', error);
   }
@@ -275,8 +287,53 @@ export default function likeReducer(state = initialState, action = {}) {
         checkLikedListingsError: payload,
       };
 
+    case GET_LISTING_LIKE_COUNTS_REQUEST:
+      return {
+        ...state,
+        checkLikedListingsInProgress: true,
+        checkLikedListingsError: null,
+      };
+    case GET_LISTING_LIKE_COUNTS_SUCCESS: {
+      const { likeCounts } = payload;
+      const updatedLikesData = { ...state.likesData };
+      const updatedCounts = { ...state.likeCounts };
+      
+      Object.keys(likeCounts).forEach(listingId => {
+        const likeCount = likeCounts[listingId];
+        updatedLikesData[listingId] = {
+          ...updatedLikesData[listingId],
+          likeCount,
+          // Don't override isLiked status if it exists (for authenticated users)
+          isLiked: updatedLikesData[listingId]?.isLiked || false,
+        };
+        updatedCounts[listingId] = likeCount;
+      });
+      
+      // Save to localStorage with guards for SSR
+      if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+        try {
+          saveLikeCountsToStorage(updatedCounts);
+        } catch (e) {}
+      }
+      
+      return {
+        ...state,
+        checkLikedListingsInProgress: false,
+        likesData: updatedLikesData,
+        likeCounts: updatedCounts,
+      };
+    }
+    case GET_LISTING_LIKE_COUNTS_ERROR:
+      return {
+        ...state,
+        checkLikedListingsInProgress: false,
+        checkLikedListingsError: payload,
+      };
+
     case RESET_LIKE_COUNTS:
-      localStorage.removeItem('listingLikeCounts');
+      if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+        try { localStorage.removeItem('listingLikeCounts'); } catch (_) {}
+      }
       return {
         ...state,
         likeCounts: {},
@@ -357,6 +414,21 @@ export const checkLikedListings = listingIds => (dispatch, getState, sdk) => {
     })
     .catch(e => {
       dispatch(checkLikedListingsError(e));
+      throw e;
+    });
+};
+
+export const getListingLikeCounts = listingIds => (dispatch, getState, sdk) => {
+  dispatch(getListingLikeCountsRequest());
+
+  return getListingLikeCountsAPI({ listingIds })
+    .then(response => {
+      console.log('Get listing like counts API response:', response);
+      dispatch(getListingLikeCountsSuccess(response));
+      return response;
+    })
+    .catch(e => {
+      dispatch(getListingLikeCountsError(e));
       throw e;
     });
 }; 

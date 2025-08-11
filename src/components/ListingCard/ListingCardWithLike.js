@@ -17,7 +17,7 @@ import { richText } from '../../util/richText';
 import { createSlug } from '../../util/urlHelpers';
 import { isBookingProcessAlias } from '../../transactions/transaction';
 
-import { likeListing, unlikeListing, checkLikedListings } from '../../ducks/like.duck';
+import { likeListing, unlikeListing, checkLikedListings, getListingLikeCounts } from '../../ducks/like.duck';
 import { getOfferStatuses } from '../../ducks/offer.duck';
 import {
   LikeButton,
@@ -167,6 +167,7 @@ export const ListingCardWithLikeComponent = props => {
     onUnlikeListing,
     onCheckLikedListings,
     onGetOfferStatuses,
+    onGetListingLikeCounts,
   } = props;
 
   const classes = classNames(rootClassName || css.root, className);
@@ -208,10 +209,15 @@ export const ListingCardWithLikeComponent = props => {
     const hasLikeData = likeData.hasOwnProperty('isLiked');
     
     if (currentUser && onCheckLikedListings && !hasLikeData && !checkedRef.current.has(listingKey)) {
+      // Authenticated user: check both like count and like status
       checkedRef.current.add(listingKey);
       onCheckLikedListings([id]);
+    } else if (!currentUser && onGetListingLikeCounts && !likeData.hasOwnProperty('likeCount') && !checkedRef.current.has(id)) {
+      // Non-authenticated user: just get like counts
+      checkedRef.current.add(id);
+      onGetListingLikeCounts([id]);
     }
-  }, [currentUser?.id?.uuid, id, likeData.isLiked, onCheckLikedListings]);
+  }, [currentUser?.id?.uuid, id, likeData.isLiked, likeData.likeCount, onCheckLikedListings, onGetListingLikeCounts]);
 
   // Check offer status when component mounts if not already known
   useEffect(() => {
@@ -343,6 +349,7 @@ const mapDispatchToProps = dispatch => ({
   onUnlikeListing: listingId => dispatch(unlikeListing(listingId)),
   onCheckLikedListings: listingIds => dispatch(checkLikedListings(listingIds)),
   onGetOfferStatuses: listingIds => dispatch(getOfferStatuses(listingIds)),
+  onGetListingLikeCounts: listingIds => dispatch(getListingLikeCounts(listingIds)),
 });
 
 const ListingCardWithLike = compose(
