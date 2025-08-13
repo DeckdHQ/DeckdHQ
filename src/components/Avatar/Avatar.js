@@ -10,7 +10,7 @@ import {
 import { PROFILE_PAGE_PENDING_APPROVAL_VARIANT } from '../../util/urlHelpers';
 import { isUserAuthorized } from '../../util/userHelpers';
 
-import { ResponsiveImage, IconBannedUser, NamedLink } from '../../components/';
+import { ResponsiveImage, IconBannedUser, NamedLink, VerifiedBadge } from '../../components/';
 
 import css from './Avatar.module.css';
 
@@ -54,6 +54,7 @@ export const Avatar = props => {
     user,
     renderSizes = AVATAR_SIZES,
     disableProfileLink,
+    badgeVariant = 'default',
   } = props;
   const classes = classNames(rootClassName || css.root, className);
 
@@ -68,6 +69,9 @@ export const Avatar = props => {
 
   const isBannedUser = avatarUser.attributes.banned;
   const isDeletedUser = avatarUser.attributes.deleted;
+  
+  // Check if user is verified - assuming it's stored in publicData.verified
+  const isVerified = avatarUser.attributes?.profile?.publicData?.verified === true;
 
   const defaultUserDisplayName = isBannedUser
     ? intl.formatMessage({ id: 'Avatar.bannedUserDisplayName' })
@@ -100,40 +104,52 @@ export const Avatar = props => {
     );
   } else if (hasProfileImage && profileLinkEnabled) {
     return (
-      <NamedLink {...rootProps} {...linkProps}>
-        <ResponsiveImage
-          rootClassName={css.avatarImage}
-          alt={displayName}
-          image={avatarUser.profileImage}
-          variants={AVATAR_IMAGE_VARIANTS}
-          sizes={renderSizes}
-        />
-      </NamedLink>
+      <div className={css.avatarWrapper}>
+        <NamedLink {...rootProps} {...linkProps}>
+          <ResponsiveImage
+            rootClassName={css.avatarImage}
+            alt={displayName}
+            image={avatarUser.profileImage}
+            variants={AVATAR_IMAGE_VARIANTS}
+            sizes={renderSizes}
+          />
+        </NamedLink>
+        <VerifiedBadge isVerified={isVerified} variant={badgeVariant} />
+      </div>
     );
   } else if (hasProfileImage) {
     return (
-      <div {...rootProps}>
-        <ResponsiveImage
-          rootClassName={css.avatarImage}
-          alt={displayName}
-          image={avatarUser.profileImage}
-          variants={AVATAR_IMAGE_VARIANTS}
-          sizes={renderSizes}
-        />
+      <div className={css.avatarWrapper}>
+        <div {...rootProps}>
+          <ResponsiveImage
+            rootClassName={css.avatarImage}
+            alt={displayName}
+            image={avatarUser.profileImage}
+            variants={AVATAR_IMAGE_VARIANTS}
+            sizes={renderSizes}
+          />
+        </div>
+        <VerifiedBadge isVerified={isVerified} variant={badgeVariant} />
       </div>
     );
   } else if (profileLinkEnabled) {
     // Placeholder avatar (initials)
     return (
-      <NamedLink {...rootProps} {...linkProps}>
-        <span className={initialsClassName || css.initials}>{abbreviatedName}</span>
-      </NamedLink>
+      <div className={css.avatarWrapper}>
+        <NamedLink {...rootProps} {...linkProps}>
+          <span className={initialsClassName || css.initials}>{abbreviatedName}</span>
+        </NamedLink>
+        <VerifiedBadge isVerified={isVerified} variant={badgeVariant} />
+      </div>
     );
   } else {
     // Placeholder avatar (initials)
     return (
-      <div {...rootProps}>
-        <span className={initialsClassName || css.initials}>{abbreviatedName}</span>
+      <div className={css.avatarWrapper}>
+        <div {...rootProps}>
+          <span className={initialsClassName || css.initials}>{abbreviatedName}</span>
+        </div>
+        <VerifiedBadge isVerified={isVerified} variant={badgeVariant} />
       </div>
     );
   }

@@ -1,0 +1,54 @@
+.root {
+  position: absolute;
+  bottom: -2px;
+  right: 7px;
+  z-index: 2;
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+/* Navbar context */
+.navbar {
+  position: absolute !important;
+  bottom: 13px !important;
+  right: -4px !important;
+  z-index: 2;
+}
+
+.navbarIcon {
+  width: 20px !important;
+  height: 20px !important;
+  display: block;
+}
+
+/* UserCard content context */
+.userCardContent {
+  position: absolute;
+  bottom: -2px;
+  right: 2px;
+  z-index: 2;
+}
+
+.userCardContentIcon {
+  width: 30px;
+  height: 30px;
+  display: block;
+}
+
+/* Order panel context (listing detail page under price) */
+.orderPanel {
+  position: absolute;
+  bottom: -4px;
+  right: 5px;
+  z-index: 2;
+}
+
+.orderPanelIcon {
+  width: 18px;
+  height: 18px;
+  display: block;
+} 

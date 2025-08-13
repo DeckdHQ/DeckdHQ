@@ -50,6 +50,7 @@ import {
   NamedRedirect,
   FollowButton,
   FollowerCount,
+  VerifiedBadge,
 } from '../../components';
 import ListingCardWithLike from '../../components/ListingCard/ListingCardWithLike';
 
@@ -84,7 +85,7 @@ export const AsideContent = props => {
   
   return (
     <div className={css.asideContent}>
-      <AvatarLarge className={css.avatar} user={user} disableProfileLink />
+      <AvatarLarge className={css.avatar} user={user} disableProfileLink badgeVariant="userCardContent" />
       <H2 as="h1" className={css.mobileHeading}>
         {displayName ? (
           <FormattedMessage id="ProfilePage.mobileHeading" values={{ name: displayName }} />
@@ -268,6 +269,9 @@ export const MainContent = props => {
     isCurrentUser = false,
   } = props;
 
+  // Check if user is verified
+  const isVerified = user?.attributes?.profile?.publicData?.verified === true;
+
   const hasListings = listings.length > 0;
   const hasMatchMedia = typeof window !== 'undefined' && window?.matchMedia;
   const isMobileLayout =
@@ -295,9 +299,14 @@ export const MainContent = props => {
   }
   return (
     <div>
-      <H2 as="h1" className={css.desktopHeading}>
-        <FormattedMessage id="ProfilePage.desktopHeading" values={{ name: displayName }} />
-      </H2>
+      <div className={css.nameAndBadgeWrapper}>
+        <H2 as="h1" className={css.desktopHeading}>
+          <FormattedMessage id="ProfilePage.desktopHeading" values={{ name: displayName }} />
+        </H2>
+        {isVerified && (
+          <VerifiedBadge isVerified={true} className={css.profileVerifiedBadge} />
+        )}
+      </div>
       {hasBio ? <p className={css.bio}>{bioWithLinks}</p> : null}
 
       {displayName ? (
@@ -439,7 +448,7 @@ export const ProfilePageComponent = props => {
     if (profileUserId && mounted) {
       onGetFollowers(profileUserId);
     }
-  }, [profileUserId, mounted]);
+  }, [profileUserId, mounted, onGetFollowers, currentUser?.id?.uuid]);
 
   // Load liked listings for current user
   useEffect(() => {

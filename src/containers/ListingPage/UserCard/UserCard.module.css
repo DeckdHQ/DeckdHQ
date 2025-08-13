@@ -163,3 +163,14 @@
   composes: a from global;
   font-weight: var(--fontWeightMedium);
 }
+
+.avatarWrapperWithBadge {
+  position: relative;
+  display: inline-block;
+}
+
+.verifiedBadge {
+  position: absolute;
+  bottom: -2px;
+  right: 7px;
+}

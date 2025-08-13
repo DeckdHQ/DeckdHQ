@@ -442,7 +442,7 @@ const OrderPanel = props => {
         />
 
         <div className={css.author}>
-          <AvatarSmall user={author} className={css.providerAvatar} />
+          <AvatarSmall user={author} className={css.providerAvatar} badgeVariant="orderPanel" />
           <span className={css.providerNameLinked}>
             <FormattedMessage id="OrderPanel.author" values={{ name: authorLink }} />
           </span>

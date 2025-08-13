@@ -171,13 +171,19 @@ export default function followReducer(state = initialState, action = {}) {
       };
     case GET_FOLLOWERS_SUCCESS: {
       const userId = payload.userId;
-      // Always start with 0 if not in storage, ignore any existing bad data
-      const followerCount = state.followerCounts[userId] ?? 0;
+      const existingData = state.followersData[userId] || {};
+      
+      // Use existing follower count if we have it, otherwise default to stored count or 0
+      // The backend doesn't provide follower count (line 24 in API), so we preserve what we have
+      const followerCount = existingData.followerCount !== undefined 
+        ? existingData.followerCount 
+        : (state.followerCounts[userId] ?? 0);
       
       console.log('GET_FOLLOWERS_SUCCESS: setting follower data', {
         userId,
+        existingFollowerCount: existingData.followerCount,
         storedCount: state.followerCounts[userId],
-        followerCount,
+        finalFollowerCount: followerCount,
         isFollowing: payload.isFollowing,
         payload
       });
@@ -188,6 +194,7 @@ export default function followReducer(state = initialState, action = {}) {
         followersData: {
           ...state.followersData,
           [userId]: {
+            ...existingData,
             followerCount,
             isFollowing: payload.isFollowing,
           },

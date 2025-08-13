@@ -339,3 +339,16 @@
     width: 100%;
   }
 }
+
+.nameAndBadgeWrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.profileVerifiedBadge {
+  position: relative;
+  display: inline-block;
+  margin-top: -4px;
+}

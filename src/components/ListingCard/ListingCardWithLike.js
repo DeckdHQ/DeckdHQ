@@ -20,12 +20,13 @@ import { isBookingProcessAlias } from '../../transactions/transaction';
 import { likeListing, unlikeListing, checkLikedListings, getListingLikeCounts } from '../../ducks/like.duck';
 import { getOfferStatuses } from '../../ducks/offer.duck';
 import {
+  ResponsiveImage,
+  NamedLink,
   LikeButton,
   LikeCount,
   OfferStatusIndicator,
-  NamedLink,
+  VerifiedBadge,
   AspectRatioWrapper,
-  ResponsiveImage,
   ListingCardThumbnail,
 } from '../../components';
 
@@ -179,6 +180,9 @@ export const ListingCardWithLikeComponent = props => {
 
   const author = ensureUser(listing.author);
   const authorName = author.attributes.profile.displayName;
+  
+  // Check if author is verified
+  const isAuthorVerified = author.attributes?.profile?.publicData?.verified === true;
 
   const { listingType, cardStyle } = publicData || {};
   const validListingTypes = config.listing.listingTypes;
@@ -206,18 +210,29 @@ export const ListingCardWithLikeComponent = props => {
   // Check liked status when component mounts if not already known
   useEffect(() => {
     const listingKey = `${currentUser?.id?.uuid}-${id}`;
-    const hasLikeData = likeData.hasOwnProperty('isLiked');
+    const hasAuthenticatedLikeData = likeData.hasOwnProperty('isLiked');
+    const hasPublicLikeCount = likeData.hasOwnProperty('likeCount');
     
-    if (currentUser && onCheckLikedListings && !hasLikeData && !checkedRef.current.has(listingKey)) {
-      // Authenticated user: check both like count and like status
-      checkedRef.current.add(listingKey);
-      onCheckLikedListings([id]);
-    } else if (!currentUser && onGetListingLikeCounts && !likeData.hasOwnProperty('likeCount') && !checkedRef.current.has(id)) {
-      // Non-authenticated user: just get like counts
-      checkedRef.current.add(id);
-      onGetListingLikeCounts([id]);
+    if (currentUser && onCheckLikedListings) {
+      // For authenticated users, always fetch if we don't have isLiked status for this user+listing combo
+      if (!hasAuthenticatedLikeData && !checkedRef.current.has(listingKey)) {
+        checkedRef.current.add(listingKey);
+        onCheckLikedListings([id]);
+      }
+    } else if (!currentUser && onGetListingLikeCounts) {
+      // For non-authenticated users, only fetch if we don't have any like count data
+      if (!hasPublicLikeCount && !checkedRef.current.has(id)) {
+        checkedRef.current.add(id);
+        onGetListingLikeCounts([id]);
+      }
     }
   }, [currentUser?.id?.uuid, id, likeData.isLiked, likeData.likeCount, onCheckLikedListings, onGetListingLikeCounts]);
+
+  // Clear cached data when authentication state changes
+  useEffect(() => {
+    // When user logs in/out, clear the checked cache so data gets refetched
+    checkedRef.current.clear();
+  }, [currentUser?.id?.uuid]);
 
   // Check offer status when component mounts if not already known
   useEffect(() => {
@@ -289,6 +304,9 @@ export const ListingCardWithLikeComponent = props => {
             {showAuthorInfo ? (
               <div className={css.authorInfo}>
                 <FormattedMessage id="ListingCard.author" values={{ authorName }} />
+                {isAuthorVerified && (
+                  <VerifiedBadge isVerified={true} className={css.authorVerifiedBadge} />
+                )}
               </div>
             ) : null}
           </div>

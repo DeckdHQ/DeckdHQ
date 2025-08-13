@@ -256,12 +256,18 @@ export default function likeReducer(state = initialState, action = {}) {
       
       Object.keys(likeStatusMap).forEach(listingId => {
         const { isLiked, likeCount } = likeStatusMap[listingId];
+        const existingData = updatedLikesData[listingId] || {};
+        
+        // Preserve existing like count if available and backend doesn't provide one, 
+        // otherwise use backend count (more authoritative)
+        const finalLikeCount = likeCount !== undefined ? likeCount : (existingData.likeCount || 0);
+        
         updatedLikesData[listingId] = {
-          ...updatedLikesData[listingId],
+          ...existingData,
           isLiked,
-          likeCount,
+          likeCount: finalLikeCount,
         };
-        updatedCounts[listingId] = likeCount;
+        updatedCounts[listingId] = finalLikeCount;
       });
       
       // Save to localStorage

@@ -21,6 +21,11 @@
   }
 }
 
+.avatarWrapper {
+  position: relative;
+  display: inline-block;
+}
+
 /* Small Avatar */
 
 .root {

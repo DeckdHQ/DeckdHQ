@@ -262,7 +262,7 @@ export const ListingPageComponent = props => {
     if (authorId && !isOwnListing && mounted) {
       onGetFollowers(authorId);
     }
-  }, [authorId, isOwnListing, mounted, onGetFollowers]);
+  }, [authorId, isOwnListing, mounted, onGetFollowers, currentUser?.id?.uuid]);
 
   const handleFollow = () => {
     if (authorId) {

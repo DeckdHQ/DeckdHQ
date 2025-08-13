@@ -61,7 +61,7 @@ const ProfileMenu = ({ currentPage, currentUser, onLogout, showManageListingsLin
   return (
     <Menu>
       <MenuLabel className={css.profileMenuLabel} isOpenClassName={css.profileMenuIsOpen}>
-        <Avatar className={css.avatar} user={currentUser} disableProfileLink />
+        <Avatar className={css.avatar} user={currentUser} disableProfileLink badgeVariant="navbar" />
       </MenuLabel>
       <MenuContent className={css.profileMenuContent}>
         {showManageListingsLink ? (

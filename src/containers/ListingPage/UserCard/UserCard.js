@@ -6,6 +6,7 @@ import { FormattedMessage } from '../../../util/reactIntl';
 import { richText } from '../../../util/richText';
 import { ensureUser, ensureCurrentUser } from '../../../util/data';
 import { propTypes } from '../../../util/types';
+import { createSlug } from '../../../util/urlHelpers';
 
 import { AvatarLarge, NamedLink, InlineTextButton, FollowButton, FollowerCount } from '../../../components';
 
@@ -101,7 +102,6 @@ const UserCard = props => {
 
   const userIsCurrentUser = user && user.type === 'currentUser';
   const ensuredUser = userIsCurrentUser ? ensureCurrentUser(user) : ensureUser(user);
-
   const ensuredCurrentUser = ensureCurrentUser(currentUser);
   const isCurrentUser =
     ensuredUser.id && ensuredCurrentUser.id && ensuredUser.id.uuid === ensuredCurrentUser.id.uuid;
@@ -118,9 +118,19 @@ const UserCard = props => {
   });
 
   const separator =
-    (mounted && isCurrentUser) || !showContact ? null : (
-      <span className={css.linkSeparator}>•</span>
-    );
+    !isCurrentUser && showContact && mounted ? <span className={css.linkSeparator}> • </span> : null;
+
+  const linkToProfile = (
+    <NamedLink
+      className={css.profileLink}
+      name="ProfilePage"
+      params={{ id: ensuredUser.id.uuid, slug: createSlug(displayName) }}
+    >
+      <AvatarLarge user={ensuredUser} disableProfileLink badgeVariant="userCardContent" />
+    </NamedLink>
+  );
+
+  const linkToUser = linkToProfile;
 
   const contact = showContact ? (
     <InlineTextButton
@@ -172,7 +182,7 @@ const UserCard = props => {
   return (
     <div className={classes}>
       <div className={css.content}>
-        <AvatarLarge className={css.avatar} user={user} />
+        {linkToUser}
         <div className={css.info}>
           <div className={css.headingRow}>
             <FormattedMessage id="UserCard.heading" values={{ name: displayName }} />
