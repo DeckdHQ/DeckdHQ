@@ -1,3 +1,53 @@
 .root {
-  /* No default styles */
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 20px;
+  min-width: 60px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  padding: 8px 12px;
+  gap: 6px;
+}
+
+.root:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.root:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.likeCount {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  line-height: 1;
+}
+
+.heartIcon {
+  width: 18px;
+  height: 18px;
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.heartIconFilled {
+  fill: #ff0000 !important;
+}
+
+.heartIcon[fill="#ff0000"] {
+  fill: #ff0000 !important;
+}
+
+.root:hover .heartIcon {
+  transform: scale(1.1);
 } 

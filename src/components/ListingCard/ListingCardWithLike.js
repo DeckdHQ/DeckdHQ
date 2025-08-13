@@ -23,7 +23,6 @@ import {
   ResponsiveImage,
   NamedLink,
   LikeButton,
-  LikeCount,
   OfferStatusIndicator,
   VerifiedBadge,
   AspectRatioWrapper,
@@ -245,17 +244,13 @@ export const ListingCardWithLikeComponent = props => {
     }
   }, [currentUser?.id?.uuid, id, offerStatus, onGetOfferStatuses]);
 
-  const handleLike = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleLike = () => {
     if (currentUser && onLikeListing) {
       onLikeListing(id);
     }
   };
 
-  const handleUnlike = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleUnlike = () => {
     if (currentUser && onUnlikeListing) {
       onUnlikeListing(id);
     }
@@ -271,19 +266,38 @@ export const ListingCardWithLikeComponent = props => {
 
   return (
     <div className={classes}>
+      <div className={css.imageContainer}>
+        <NamedLink className={css.listingLink} name="ListingPage" params={{ id, slug }}>
+          <ListingCardImage
+            renderSizes={renderSizes}
+            title={title}
+            currentListing={currentListing}
+            config={config}
+            setActivePropsMaybe={setActivePropsMaybe}
+            aspectWidth={aspectWidth}
+            aspectHeight={aspectHeight}
+            variantPrefix={variantPrefix}
+            style={cardStyle}
+            showListingImage={showListingImage}
+          />
+        </NamedLink>
+        
+        {/* Like button positioned over the image */}
+        {showLikeButton && (
+          <LikeButton
+            className={css.likeButtonOverlay}
+            isLiked={isLiked}
+            onLike={handleLike}
+            onUnlike={handleUnlike}
+            likeInProgress={likeInProgress}
+            unlikeInProgress={unlikeInProgress}
+            disabled={!currentUser}
+            likeCount={likeCount}
+          />
+        )}
+      </div>
+      
       <NamedLink className={css.listingLink} name="ListingPage" params={{ id, slug }}>
-        <ListingCardImage
-          renderSizes={renderSizes}
-          title={title}
-          currentListing={currentListing}
-          config={config}
-          setActivePropsMaybe={setActivePropsMaybe}
-          aspectWidth={aspectWidth}
-          aspectHeight={aspectHeight}
-          variantPrefix={variantPrefix}
-          style={cardStyle}
-          showListingImage={showListingImage}
-        />
         <div className={css.info}>
           <PriceMaybe
             price={price}
@@ -312,21 +326,8 @@ export const ListingCardWithLikeComponent = props => {
           </div>
         </div>
       </NamedLink>
-      
-      {/* Like functionality */}
-      <div className={css.likeSection}>
-        <LikeCount count={likeCount} className={css.likeCount} />
-        {showLikeButton && currentUser && (
-          <LikeButton
-            className={css.likeButton}
-            isLiked={isLiked}
-            onLike={handleLike}
-            onUnlike={handleUnlike}
-            likeInProgress={likeInProgress}
-            unlikeInProgress={unlikeInProgress}
-          />
-        )}
-      </div>
+
+
       
       {/* Offer status */}
       {currentUser && offerStatus && (
