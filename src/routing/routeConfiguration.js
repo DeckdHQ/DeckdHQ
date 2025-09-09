@@ -30,6 +30,7 @@ const PaymentMethodsPage = loadable(() => import(/* webpackChunkName: "PaymentMe
 const PrivacyPolicyPage = loadable(() => import(/* webpackChunkName: "PrivacyPolicyPage" */ '../containers/PrivacyPolicyPage/PrivacyPolicyPage'));
 const ProfilePage = loadable(() => import(/* webpackChunkName: "ProfilePage" */ '../containers/ProfilePage/ProfilePage'));
 const ProfileSettingsPage = loadable(() => import(/* webpackChunkName: "ProfileSettingsPage" */ '../containers/ProfileSettingsPage/ProfileSettingsPage'));
+const SellerPage = loadable(() => import(/* webpackChunkName: "SellerPage" */ '../containers/SellerPage/SellerPage'));
 const SearchPageWithMap = loadable(() => import(/* webpackChunkName: "SearchPageWithMap" */ /* webpackPrefetch: true */  '../containers/SearchPage/SearchPageWithMap'));
 const SearchPageWithGrid = loadable(() => import(/* webpackChunkName: "SearchPageWithGrid" */ /* webpackPrefetch: true */  '../containers/SearchPage/SearchPageWithGrid'));
 const StripePayoutPage = loadable(() => import(/* webpackChunkName: "StripePayoutPage" */ '../containers/StripePayoutPage/StripePayoutPage'));
@@ -188,6 +189,13 @@ const routeConfiguration = (layoutConfig, accessControlConfig) => {
       auth: true,
       authPage: 'LoginPage',
       component: ProfileSettingsPage,
+    },
+    {
+      path: '/seller/:id',
+      name: 'SellerPage',
+      ...authForPrivateMarketplace,
+      component: SellerPage,
+      loadData: pageDataLoadingAPI.SellerPage.loadData,
     },
 
     // Note: authenticating with IdP (e.g. Facebook) expects that /login path exists

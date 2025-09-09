@@ -169,11 +169,21 @@ const UserCard = props => {
       </NamedLink>
     ) : null;
 
+  const visitSellerLink = ensuredUser.id && !isCurrentUser ? (
+    <>
+      <span className={css.linkSeparator}> • </span>
+      <NamedLink className={css.link} name="SellerPage" params={{ handle: ensuredUser.id.uuid }}>
+        <FormattedMessage id="SellerPage.visitSeller" />
+      </NamedLink>
+    </>
+  ) : null;
+
   const links = ensuredUser.id ? (
     <p className={linkClasses}>
       <NamedLink className={css.link} name="ProfilePage" params={{ id: ensuredUser.id.uuid }}>
         <FormattedMessage id="UserCard.viewProfileLink" />
       </NamedLink>
+      {visitSellerLink}
       {separator}
       {mounted && isCurrentUser ? editProfileMobile : contact}
     </p>

@@ -267,10 +267,8 @@ export const MainContent = props => {
     // Like-related props
     likedListings = [],
     isCurrentUser = false,
+    isVerified = false,
   } = props;
-
-  // Check if user is verified
-  const isVerified = user?.attributes?.profile?.publicData?.verified === true;
 
   const hasListings = listings.length > 0;
   const hasMatchMedia = typeof window !== 'undefined' && window?.matchMedia;
@@ -426,6 +424,9 @@ export const ProfilePageComponent = props => {
   const profileUser = useCurrentUser ? currentUser : user;
   const { bio, displayName, publicData, metadata } = profileUser?.attributes?.profile || {};
 
+  // Check if user is verified
+  const isVerified = profileUser?.attributes?.profile?.publicData?.verified === true;
+
   // Follow functionality
   const profileUserId = profileUser?.id?.uuid;
   const followerData = profileUserId ? followersData[profileUserId] : null;
@@ -575,6 +576,7 @@ export const ProfilePageComponent = props => {
           userTypeRoles={userTypeRoles}
           likedListings={likedListings}
           isCurrentUser={isCurrentUser}
+          isVerified={isVerified}
           {...rest}
         />
       </LayoutSideNavigation>
